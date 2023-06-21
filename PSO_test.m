@@ -7,6 +7,8 @@ num_realiz = 100;
 range = [0 500];
 
 n_it_max = 40;
+n_it_min = 5;
+brk = 0.001;
 n_particles = 10;
 w = 0.9;
 c1 = 0.5;
@@ -17,6 +19,7 @@ best_all = zeros(num_realiz,1);
 
 for realizz = 1:num_realiz
 
+last_vec = zeros(n_it_min,1);
 V = zeros(n_particles,N);
 Best_pos = zeros(1,N);
 pos_particle = randi(range,n_particles,N)/100;
@@ -71,6 +74,16 @@ for it = 1:n_it_max
             best_y_local(par3) = y_ret;
             %fprintf('%d\n',par)
             best_y_local_pos(par3,:) = pos_particle(par3,:);
+        end
+    end
+    for count_last = 1:(n_it_min-1)
+        last_vec(count_last) = last_vec(count_last+1);
+    end
+    last_vec(n_it_min) = best_y;
+    if(it>n_it_min)
+        if((abs(last_vec(1)-last_vec(n_it_min)))< brk)
+            %fprintf('Final iteration %d\n',it)
+            break;
         end
     end
     %aaaaaaaac = toc;
