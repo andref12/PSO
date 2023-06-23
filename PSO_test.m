@@ -3,8 +3,17 @@ clear
 %%Particle Swarm Test
 tic;
 N = 2;
-num_realiz = 100;
+num_realiz = 1;
 range = [0 500];
+
+x = 0:0.01:5;
+y = 0:0.01:5;
+z = zeros(501,501);
+for count_x = 1:501
+    for count_y = 1:501
+        z(count_x,count_y) = costfunc(x(count_x),y(count_y));
+    end
+end
 
 n_it_max = 40;
 n_it_min = 5;
@@ -38,6 +47,8 @@ best_y_local_pos = pos_particle(:,:);
 tickloop = tic;
 pos_particle = pos_particle + V;
 for it = 1:n_it_max
+    x_plot_pos(:,it) = pos_particle(:,1);
+    y_plot_pos(:,it) = pos_particle(:,2);
     for par = 1:n_particles
         for dim = 1:N
             r1 = rand();
@@ -82,7 +93,7 @@ for it = 1:n_it_max
     last_vec(n_it_min) = best_y;
     if(it>n_it_min)
         if((abs(last_vec(1)-last_vec(n_it_min)))< brk)
-            %fprintf('Final iteration %d\n',it)
+            fprintf('Final iteration %d\n',it)
             break;
         end
     end
@@ -92,6 +103,33 @@ end
 %timer = toc(tickloop);
 %fprintf('Iteration %d took %f seconds\n',realizz,timer);
 best_all(realizz) = best_y;
+end
+figure(1);
+for plot_res = 1:it
+    z_plot = z;
+    for i = 1:n_particles
+        x_i_plot = round(100*x_plot_pos(i,plot_res));
+        x_1 = x_i_plot - 5;
+        if(x_1<1)
+            x_1 = 1;
+        end
+        x_2 = x_i_plot + 5;
+        if(x_2>501)
+            x_2 = 501;
+        end
+        y_i_plot = round(100*y_plot_pos(i,plot_res));
+        y_1 = y_i_plot - 5;
+        if(y_1<1)
+            y_1 = 1;
+        end
+        y_2 = y_i_plot + 5;
+        if(y_2>501)
+            y_2 = 501;
+        end
+        z_plot(x_1:x_2,y_1:y_2) = 10;
+    end
+    imagesc(x,y,z_plot);
+    pause(0.1);
 end
 
 result = mean(best_all);
